@@ -1,0 +1,100 @@
+package ProyectPlaceMark.controller;
+import ProyectPlaceMark.model.DatabaseConnection;
+import ProyectPlaceMark.utils.Sesion;
+import ProyectPlaceMark.utils.addproductos;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Scanner;
+import java.util.Stack;
+
+public class iniciar {
+
+     private static final Stack<Sesion> PILA_SESIONES = new Stack<>();
+     private static final Scanner datos = new Scanner(System.in);
+  
+    public void ejecutarMenu() {
+        while (true) {
+            IO.println("---------------------------------------------------------");
+            IO.println("1. Iniciar Sesion      2. Cerrar Sesión    3.Salir");
+            IO.println("---------------------------------------------------------");
+            IO.println("Seleccione una opción: ");
+            
+            int opcion = datos.nextInt();
+            datos.nextLine(); // Limpiar buffer
+            
+            switch (opcion) {
+                case 1:
+                    iniciarSesion();
+                    break;
+                case 2:
+                    cerrarSesion();
+                    break;
+                case 3:
+                    IO.println("Saliendo...");
+                    return;
+                default:
+                    IO.println("Opción inválida");
+            }
+        }
+    }
+ 
+    private void iniciarSesion() {
+        IO.println("|---------------- INICIAR SESIÓN----------------------------|");
+        IO.println("|                         Usuario/Email                     | ");
+        String usuario = datos.nextLine();
+        IO.println("|                                                           |");
+        IO.println("|                         Contraseña                        | ");
+        String contrasena = datos.nextLine();
+        IO.println("|                                                           |");
+        IO.println("------------------------------------------------------------");
+ 
+            if (validarCredenciales(usuario, contrasena)) {
+            Sesion nuevaSesion = new Sesion(usuario);
+            PILA_SESIONES.push(nuevaSesion);
+            IO.println("\n¡Inicio de sesión exitoso!");
+            IO.println("Sesión registrada: " + nuevaSesion);
+              controllersesion controlse = new controllersesion();
+              controlse.controlsesion();   
+             } else {
+            IO.println("\nCredenciales incorrectas");
+        } 
+    }
+
+    private void cerrarSesion() {
+        if (!PILA_SESIONES.isEmpty()) {
+            Sesion sesionCerrada = PILA_SESIONES.pop();
+            IO.println("\nSesión cerrada: " + sesionCerrada);
+        } else {
+            IO.println("\nNo hay sesiones activas");
+            }
+    }
+         private boolean validarCredenciales(String usuario, String contrasena) {
+        Connection connection = DatabaseConnection.getConnection();
+        if (connection == null) {
+            return false;
+        }
+
+        String query = "SELECT * FROM usuarios WHERE UserName = ? AND PasswordHas = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, usuario);
+            stmt.setString(2, contrasena);
+
+            ResultSet rs = stmt.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            System.err.println("Error al validar credenciales: " + e.getMessage());
+            return false;
+        } finally {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                System.err.println("Error al cerrar la conexión: " + e.getMessage());
+            }
+        }
+    } 
+    
+  }
+
+       
