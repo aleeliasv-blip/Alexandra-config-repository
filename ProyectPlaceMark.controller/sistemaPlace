@@ -1,0 +1,6 @@
+public class sistemaPlace {
+    void main () {
+        iniciar sistema = new iniciar();
+        sistema.ejecutarMenu();
+    }
+}
