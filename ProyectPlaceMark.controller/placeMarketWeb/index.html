@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cafetería El Buen Café</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <header>
+        <h1>☕ El Buen Café</h1>
+        <nav>
+            <ul>
+                <li><a href="#">Inicio</a></li>
+                <li><a href="#menu">Menú</a></li>
+                <li><a href="#">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <button class="btn-carrito">🛒</button>
+
+    <div class="carrito" id="carrito">
+        <h3>Carrito</h3>
+        <ul id="lista-carrito"></ul>
+        <p class="total">Total: $<span id="total">0.00</span></p>
+        <button class="btn-pagar">Pagar</button>
+    </div>
+
+    <section class="hero">
+        <h2>El Mejor Café de la Ciudad</h2>
+    </section>
+
+    <section class="menu" id="menu">
+        <h2>Nuestro Menú</h2>
+        <div class="productos">
+            <div class="card" data-nombre="Café Espresso" data-precio="3.50">
+                <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93" alt="Café Espresso">
+                <h3>Café Espresso</h3>
+                <p>Sabor intenso y aromático</p>
+                <button>Agregar $3.50</button>
+            </div>
+            <div class="card" data-nombre="Capuccino" data-precio="4.00">
+                <img src="https://images.unsplash.com/photo-1588196749597-9ff075ee6b5b" alt="Capuccino">
+                <h3>Capuccino</h3>
+                <p>Espuma cremosa con un toque dulce</p>
+                <button>Agregar $4.00</button>
+            </div>
+            <div class="card" data-nombre="Latte" data-precio="4.50">
+                <img src="https://images.unsplash.com/photo-1511920170033-f8396924c348" alt="Latte">
+                <h3>Latte</h3>
+                <p>Perfecta mezcla de café y leche</p>
+                <button>Agregar $4.50</button>
+            </div>
+            <div class="card" data-nombre="Cheesecake" data-precio="5.00">
+                <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93" alt="Postre">
+                <h3>Cheesecake</h3>
+                <p>Dulce y suave, ideal para acompañar</p>
+                <button>Agregar $5.00</button>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2025 El Buen Café | Todos los derechos reservados</p>
+    </footer>
+
+    <script>
+        const carritoBtn = document.querySelector('.btn-carrito');
+        const carritoDiv = document.getElementById('carrito');
+        const listaCarrito = document.getElementById('lista-carrito');
+        const totalSpan = document.getElementById('total');
+        let total = 0;
+
+        carritoBtn.addEventListener('click', () => {
+            carritoDiv.style.display = carritoDiv.style.display === 'block' ? 'none' : 'block';
+        });
+
+        document.querySelectorAll('.card button').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const card = e.target.closest('.card');
+                const nombre = card.getAttribute('data-nombre');
+                const precio = parseFloat(card.getAttribute('data-precio'));
+
+                // Crear item en el carrito
+                const li = document.createElement('li');
+                li.textContent = `${nombre} - $${precio.toFixed(2)}`;
+                const eliminarBtn = document.createElement('button');
+                eliminarBtn.textContent = 'X';
+                eliminarBtn.addEventListener('click', () => {
+                    total -= precio;
+                    totalSpan.textContent = total.toFixed(2);
+                    listaCarrito.removeChild(li);
+                });
+                li.appendChild(eliminarBtn);
+                listaCarrito.appendChild(li);
+
+                // Actualizar total
+                total += precio;
+                totalSpan.textContent = total.toFixed(2);
+            });
+        });
+    </script>
+</body>
+</html>
