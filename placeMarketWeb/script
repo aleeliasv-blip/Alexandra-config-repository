@@ -1,0 +1,196 @@
+/* ================================
+   MENÚ RESPONSIVO
+================================ */
+const btnMenu = document.createElement("button");
+btnMenu.textContent = "☰";
+btnMenu.classList.add("btn-menu");
+document.querySelector("header").prepend(btnMenu);
+
+btnMenu.addEventListener("click", () => {
+    document.querySelector("nav ul").classList.toggle("activo");
+});
+
+/* ================================
+   MODAL (VENTANA FLOTANTE)
+================================ */
+const modal = document.createElement("div");
+modal.classList.add("modal");
+modal.innerHTML = `
+    <div class="modal-contenido">
+        <h2>Bienvenido a El Buen Café</h2>
+        <p>¿Listo para disfrutar el mejor aroma?</p>
+        <button id="cerrarModal">Cerrar</button>
+    </div>
+`;
+document.body.appendChild(modal);
+
+document.getElementById("cerrarModal").addEventListener("click", () => {
+    modal.style.display = "none";
+});
+
+/* Modal aparece automáticamente */
+setTimeout(() => modal.style.display = "flex", 1500);
+
+
+/* ================================
+   CARRITO DE COMPRAS 
+================================ */
+const carritoBtn = document.querySelector('.btn-carrito');
+const carritoDiv = document.getElementById('carrito');
+const listaCarrito = document.getElementById('lista-carrito');
+const totalSpan = document.getElementById('total');
+
+let total = 0;
+let carrito = []; // arreglo con todos los productos
+
+carritoBtn.addEventListener('click', () => {
+    carritoDiv.style.display = carritoDiv.style.display === 'block' ? 'none' : 'block';
+});
+
+// AGREGAR PRODUCTOS
+document.querySelectorAll('.card button').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        const card = e.target.closest('.card');
+        const nombre = card.dataset.nombre;
+        const precio = parseFloat(card.dataset.precio);
+
+        carrito.push({ nombre, precio });
+
+        const li = document.createElement('li');
+        li.textContent = `${nombre} - $${precio.toFixed(2)}`;
+        
+        const eliminarBtn = document.createElement("button");
+        eliminarBtn.textContent = "X";
+
+        eliminarBtn.addEventListener("click", () => {
+            carrito = carrito.filter(item => item.nombre !== nombre);
+            total -= precio;
+            totalSpan.textContent = total.toFixed(2);
+            listaCarrito.removeChild(li);
+        });
+
+        li.appendChild(eliminarBtn);
+        listaCarrito.appendChild(li);
+
+        total += precio;
+        totalSpan.textContent = total.toFixed(2);
+    });
+});
+
+
+/* ================================
+   BOTÓN PARA CARGAR NOTICIAS
+================================ */
+const btnNoticias = document.createElement("button");
+btnNoticias.textContent = "📢 Cargar Noticias";
+btnNoticias.classList.add("btn-noticias");
+document.body.appendChild(btnNoticias);
+
+const contenedorNoticias = document.createElement("div");
+contenedorNoticias.classList.add("noticias");
+document.body.appendChild(contenedorNoticias);
+
+// Array de noticias
+const noticias = [
+    { titulo: "Nueva mezcla premium", detalle: "Un sabor más intenso y aromático." },
+    { titulo: "Promo 2x1", detalle: "Solo los viernes de enero." },
+    { titulo: "Nuevo Cheesecake", detalle: "Receta exclusiva del chef." },
+    { titulo: "Baristas certificados", detalle: "Nuestro equipo se actualiza constantemente." }
+];
+
+btnNoticias.addEventListener("click", () => {
+    contenedorNoticias.innerHTML = ""; 
+
+    // Bucle FOR
+    for (let i = 0; i < noticias.length; i++) {
+        const card = document.createElement("div");
+        card.classList.add("noticia-card");
+        card.innerHTML = `
+            <h3>${noticias[i].titulo}</h3>
+            <p>${noticias[i].detalle}</p>
+        `;
+        contenedorNoticias.appendChild(card);
+    }
+});
+
+
+/* ================================
+   CONTADORES ANIMADOS
+================================ */
+const contenedorContadores = document.createElement("section");
+contenedorContadores.classList.add("contadores");
+contenedorContadores.innerHTML = `
+    <div class="contador" data-target="250">0</div>
+    <p>Tazas servidas hoy</p>
+
+    <div class="contador" data-target="125">0</div>
+    <p>Clientes felices</p>
+
+    <div class="contador" data-target="85">0</div>
+    <p>Pedidos online</p>
+`;
+
+document.body.appendChild(contenedorContadores);
+
+const counters = document.querySelectorAll(".contador");
+
+function animarContador(counter) {
+    let valor = 0;
+    const target = parseInt(counter.dataset.target);
+
+    const actualizar = () => {
+        if (valor < target) {
+            valor += Math.ceil(target / 100);
+            counter.textContent = valor;
+            requestAnimationFrame(actualizar);
+        } else {
+            counter.textContent = target;
+        }
+    };
+    actualizar();
+}
+
+// Aparecen cuando hacen scroll
+const observerCounters = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+        if (e.isIntersecting) animarContador(e.target);
+    });
+});
+
+counters.forEach(c => observerCounters.observe(c));
+
+
+/* ================================
+   EFECTOS DE TARJETAS
+================================ */
+document.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('mouseenter', () => {
+        card.style.transform = 'scale(1.05)';
+    });
+    card.addEventListener('mouseleave', () => {
+        card.style.transform = 'scale(1)';
+    });
+});
+
+
+/* ================================
+   SWITCH + OPERADORES LÓGICOS
+================================ */
+function evaluarPrecio(precio) {
+    switch (true) {
+        case (precio < 4):
+            return "Económico";
+        case (precio >= 4 && precio < 5):
+            return "Regular";
+        default:
+            return "Premium";
+    }
+}
+
+// Mostrar la categoría de precio en consola
+document.querySelectorAll('.card').forEach(card => {
+    const precio = parseFloat(card.dataset.precio);
+    console.log(card.dataset.nombre, evaluarPrecio(precio));
+});
+
+
