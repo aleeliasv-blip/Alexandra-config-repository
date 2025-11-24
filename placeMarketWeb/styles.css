@@ -381,3 +381,57 @@ nav ul.activo {
     font-weight: bold;
 }
 
+/* -----------------------
+   MODO OSCURO / CLARO
+------------------------*/
+:root {
+    --fondo: #ffffff;
+    --texto: #333;
+    --caja: #f3f3f3;
+}
+
+body.dark {
+    --fondo: #1d1d1d;
+    --texto: #f1f1f1;
+    --caja: #2c2c2c;
+}
+
+body {
+    background: var(--fondo);
+    color: var(--texto);
+    transition: background 0.5s ease, color 0.5s ease;
+}
+
+.card, .carrito, .modal-contenido, .noticia-card {
+    background: var(--caja) !important;
+    transition: background 0.5s ease;
+}
+
+/* Botón Dark Mode */
+.btn-dark {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 12px 18px;
+    border-radius: 50%;
+    font-size: 20px;
+    background-color: #444;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.btn-dark:hover {
+    transform: scale(1.1);
+}
+
+/* Animación de desvanecer */
+.fade {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity .8s ease, transform .8s ease;
+}
+.fade.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
