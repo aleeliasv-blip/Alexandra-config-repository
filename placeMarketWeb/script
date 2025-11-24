@@ -193,4 +193,110 @@ document.querySelectorAll('.card').forEach(card => {
     console.log(card.dataset.nombre, evaluarPrecio(precio));
 });
 
+/* ============================
+   MODO OSCURO / CLARO
+   (con operador ternario + localStorage)
+============================ */
 
+const btnDark = document.createElement("button");
+btnDark.classList.add("btn-dark");
+btnDark.textContent = "🌙";
+document.body.appendChild(btnDark);
+
+// Cargar modo previo
+document.body.classList.toggle("dark", localStorage.getItem("modo") === "dark");
+
+// Cambiar icono según estado
+btnDark.textContent = document.body.classList.contains("dark") ? "☀️" : "🌙";
+
+btnDark.addEventListener("click", () => {
+    const modoActual = document.body.classList.contains("dark");
+
+    // Alternar
+    document.body.classList.toggle("dark");
+
+    // Guardar usando operador ternario
+    localStorage.setItem("modo", modoActual ? "light" : "dark");
+
+    btnDark.textContent = modoActual ? "🌙" : "☀️";
+});
+
+
+/* ============================
+   GUARDAR CARRITO EN localStorage
+============================ */
+
+function guardarCarritoLS() {
+    localStorage.setItem("carrito", JSON.stringify(carrito));
+}
+
+function cargarCarritoLS() {
+    const data = JSON.parse(localStorage.getItem("carrito")) || [];
+
+    carrito = data;
+
+    carrito.forEach(item => {
+        agregarItemAlHTML(item.nombre, item.precio);
+        total += item.precio;
+    });
+
+    totalSpan.textContent = total.toFixed(2);
+}
+
+function agregarItemAlHTML(nombre, precio) {
+    const li = document.createElement("li");
+    li.textContent = `${nombre} - $${precio.toFixed(2)}`;
+
+    const eliminarBtn = document.createElement("button");
+    eliminarBtn.textContent = "X";
+
+    eliminarBtn.addEventListener("click", () => {
+        carrito = carrito.filter(p => p.nombre !== nombre);
+
+        total -= precio;
+        totalSpan.textContent = total.toFixed(2);
+
+        guardarCarritoLS();
+
+        listaCarrito.removeChild(li);
+    });
+
+    li.appendChild(eliminarBtn);
+    listaCarrito.appendChild(li);
+}
+
+// Cargar carrito inicial
+cargarCarritoLS();
+
+
+// Modificar evento de agregar producto
+document.querySelectorAll('.card button').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        const card = e.target.closest('.card');
+        const nombre = card.dataset.nombre;
+        const precio = parseFloat(card.dataset.precio);
+
+        carrito.push({ nombre, precio });
+        agregarItemAlHTML(nombre, precio);
+
+        total += precio;
+        totalSpan.textContent = total.toFixed(2);
+
+        guardarCarritoLS();
+    });
+});
+
+
+/* ============================
+   ANIMACIÓN fade-in EN SCROLL
+============================ */
+document.querySelectorAll("section, .card, .noticia-card")
+    .forEach(el => el.classList.add("fade"));
+
+const fadeObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add("visible");
+    });
+});
+
+document.querySelectorAll(".fade").forEach(el => fadeObserver.observe(el));
